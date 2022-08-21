@@ -23,7 +23,7 @@ const getUserInfo = (req, res, next) => {
 
 const updateUserInfo = (req, res, next) => {
   const userId = req.user._id;
-  const { name, about } = req.body;
+  const { name, email } = req.body;
 
   User.findById(userId).then((user) => {
     if (JSON.stringify(userId) !== JSON.stringify(user._id)) {
@@ -33,7 +33,7 @@ const updateUserInfo = (req, res, next) => {
     }
     return User.findByIdAndUpdate(
       userId,
-      { name, about },
+      { name, email },
       { new: true, runValidators: true },
     )
       .then((userData) => {
@@ -48,6 +48,11 @@ const updateUserInfo = (req, res, next) => {
             new BadRequestError(
               'Переданы некорректные данные при обновлении профиля.',
             ),
+          );
+        }
+        if (err.code === 11000) {
+          return next(
+            new ConflictError('Пользователь с таким email уже зарегистрирован.'),
           );
         }
         return next(err);
@@ -97,10 +102,6 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
         .send({ token });
     })
     .catch(next);
