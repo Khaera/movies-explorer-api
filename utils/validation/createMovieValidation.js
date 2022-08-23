@@ -6,7 +6,7 @@ const createMovieValidation = celebrate({
     director: Joi.string().required(),
     duration: Joi.number().required(),
     year: Joi.string().required(),
-    description: Joi.number().required(),
+    description: Joi.string().required(),
     image: Joi.string().pattern(/^https?:\/\/(www.)?\S/i),
     trailerLink: Joi.string().pattern(/^https?:\/\/(www.)?\S/i),
     thumbnail: Joi.string().pattern(/^https?:\/\/(www.)?\S/i),

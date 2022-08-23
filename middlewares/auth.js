@@ -1,5 +1,8 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../utils/errors/unauthorized-err');
+
+const { JWT_SECRET = 'dev-secret-key' } = process.env;
 
 // eslint-disable-next-line consistent-return
 const auth = (req, res, next) => {
@@ -13,7 +16,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'secret-key');
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return next(new UnauthorizedError('Необходима авторизация.'));
   }

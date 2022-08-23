@@ -1,10 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 
-const { PORT = 3000 } = process.env;
+const {
+  PORT = 3000,
+  MONGO_LINK = 'mongodb://localhost:27017/moviesdb',
+} = process.env;
 
 const handleErrors = require('./middlewares/handleErrors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -19,7 +23,7 @@ app.use(helmet());
 
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
+mongoose.connect(MONGO_LINK, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
