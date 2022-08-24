@@ -1,6 +1,6 @@
 const allowedCors = [
-  'moviesexplorer.khaera.nomoredomains.sbs',
-  'moviesexplorer.khaera.nomoredomains.sbs',
+  'https://moviesexplorer.khaera.nomoredomains.sbs',
+  'http://moviesexplorer.khaera.nomoredomains.sbs',
   'http://localhost:3000',
 ];
 
