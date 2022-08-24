@@ -30,12 +30,7 @@ app.use(cors({
   origin: allowedCors,
 }));
 
-mongoose.connect(MONGO_LINK, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true,
-});
+mongoose.connect(MONGO_LINK);
 
 app.use(requestLogger);
 app.use(router);
