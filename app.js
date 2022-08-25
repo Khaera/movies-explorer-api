@@ -20,6 +20,8 @@ const allowedCors = require('./utils/constants');
 
 const app = express();
 
+app.use(requestLogger);
+
 app.use(limiter);
 
 app.use(helmet());
@@ -32,7 +34,6 @@ app.use(cors({
 
 mongoose.connect(MONGO_LINK);
 
-app.use(requestLogger);
 app.use(router);
 app.use(errorLogger);
 app.use(errors());

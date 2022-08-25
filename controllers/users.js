@@ -16,12 +16,7 @@ const getUserInfo = (req, res, next) => {
   User.findById(userId)
     .orFail(new NotFoundError('Пользователь по указанному id не найден.'))
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Передан некорректный id.'));
-      }
-      return next(err);
-    });
+    .catch((err) => next(err));
 };
 
 const updateUserInfo = (req, res, next) => {
@@ -29,7 +24,7 @@ const updateUserInfo = (req, res, next) => {
   const { name, email } = req.body;
 
   User.findById(userId).then((user) => {
-    if (JSON.stringify(userId) !== JSON.stringify(user._id)) {
+    if (userId.toString() !== user._id.toString()) {
       throw new UnauthorizedError(
         'Нельзя изменить даннные другого пользователя.',
       );

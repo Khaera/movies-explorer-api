@@ -48,18 +48,14 @@ const deleteMovie = (req, res, next) => {
     .findById(filmId)
     .orFail(new NotFoundError('Фильм с указанным id не найден.'))
     .then((movie) => {
-      if (JSON.stringify(movie.owner) !== JSON.stringify(req.user._id)) {
+      if (movie.owner.toString() !== req.user._id.toString()) {
         return next(new ForbiddenError('Нельзя удалить чужой фильм.'));
       }
-      return Movie.findByIdAndRemove(filmId)
-        .then(() => res.send({ message: 'Фильм удалён.' }));
+      return Movie.remove()
+        .then(() => res.send({ message: 'Фильм удалён.' }))
+        .catch((err) => next(err));
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Передан некорректный id фильма.'));
-      }
-      return next(err);
-    });
+    .catch((err) => next(err));
 };
 
 module.exports = {

@@ -4,7 +4,6 @@ const UnauthorizedError = require('../utils/errors/unauthorized-err');
 
 const { JWT_SECRET = 'dev-secret-key' } = process.env;
 
-// eslint-disable-next-line consistent-return
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
@@ -23,7 +22,7 @@ const auth = (req, res, next) => {
 
   req.user = payload;
 
-  next();
+  return next();
 };
 
 module.exports = auth;

@@ -1,5 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
+const linkValidation = require('./linkValidation');
+
 const createMovieValidation = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
@@ -7,10 +9,10 @@ const createMovieValidation = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().pattern(/^https?:\/\/(www.)?\S/i),
-    trailerLink: Joi.string().pattern(/^https?:\/\/(www.)?\S/i),
-    thumbnail: Joi.string().pattern(/^https?:\/\/(www.)?\S/i),
-    movieId: Joi.string().hex(),
+    image: Joi.string().required().custom((value, helpers) => linkValidation(value, helpers, 'image')),
+    trailerLink: Joi.string().required().custom((value, helpers) => linkValidation(value, helpers, 'trailerLink')),
+    thumbnail: Joi.string().required().custom((value, helpers) => linkValidation(value, helpers, 'thumbnail')),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
