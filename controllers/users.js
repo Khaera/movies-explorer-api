@@ -2,11 +2,19 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const {
+  USER_NOT_FOUND,
+  USER_FORBIDDEN_DATA,
+  VALIDATION_ERROR,
+  USER_INVALID_DATA,
+  MONGO_DUPLICATE_ERR,
+  USER_CONFLICT_EMAIL,
+} = require('../utils/constants');
 
 const BadRequestError = require('../utils/errors/bad-request-err');
 const ConflictError = require('../utils/errors/conflict-err');
+const ForbiddenError = require('../utils/errors/forbidden-err');
 const NotFoundError = require('../utils/errors/not-found-err');
-const UnauthorizedError = require('../utils/errors/unauthorized-err');
 
 const { JWT_SECRET = 'dev-secret-key' } = process.env;
 
@@ -14,7 +22,7 @@ const getUserInfo = (req, res, next) => {
   const userId = req.user._id;
 
   User.findById(userId)
-    .orFail(new NotFoundError('Пользователь по указанному id не найден.'))
+    .orFail(new NotFoundError(USER_NOT_FOUND))
     .then((user) => res.send(user))
     .catch((err) => next(err));
 };
@@ -25,9 +33,7 @@ const updateUserInfo = (req, res, next) => {
 
   User.findById(userId).then((user) => {
     if (userId.toString() !== user._id.toString()) {
-      throw new UnauthorizedError(
-        'Нельзя изменить даннные другого пользователя.',
-      );
+      throw new ForbiddenError(USER_FORBIDDEN_DATA);
     }
     return User.findByIdAndUpdate(
       userId,
@@ -36,21 +42,19 @@ const updateUserInfo = (req, res, next) => {
     )
       .then((userData) => {
         if (!userData) {
-          throw new NotFoundError('Пользователь с указанным id не найден.');
+          throw new NotFoundError(USER_NOT_FOUND);
         }
         return res.send(userData);
       })
       .catch((err) => {
-        if (err.name === 'ValidationError') {
+        if (err.name === VALIDATION_ERROR) {
           return next(
-            new BadRequestError(
-              'Переданы некорректные данные при обновлении профиля.',
-            ),
+            new BadRequestError(USER_INVALID_DATA),
           );
         }
-        if (err.code === 11000) {
+        if (err.code === MONGO_DUPLICATE_ERR) {
           return next(
-            new ConflictError('Пользователь с таким email уже зарегистрирован.'),
+            new ConflictError(USER_CONFLICT_EMAIL),
           );
         }
         return next(err);
@@ -73,16 +77,14 @@ const createUser = (req, res, next) => {
       email: user.email,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === VALIDATION_ERROR) {
         return next(
-          new BadRequestError(
-            'Переданы некорректные данные при создании пользователя.',
-          ),
+          new BadRequestError(USER_INVALID_DATA),
         );
       }
       if (err.code === 11000) {
         return next(
-          new ConflictError('Пользователь с таким email уже зарегистрирован.'),
+          new ConflictError(USER_CONFLICT_EMAIL),
         );
       }
       return next(err);
