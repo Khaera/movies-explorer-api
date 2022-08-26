@@ -48,14 +48,10 @@ const updateUserInfo = (req, res, next) => {
       })
       .catch((err) => {
         if (err.name === VALIDATION_ERROR) {
-          return next(
-            new BadRequestError(USER_INVALID_DATA),
-          );
+          return next(new BadRequestError(USER_INVALID_DATA));
         }
         if (err.code === MONGO_DUPLICATE_ERR) {
-          return next(
-            new ConflictError(USER_CONFLICT_EMAIL),
-          );
+          return next(new ConflictError(USER_CONFLICT_EMAIL));
         }
         return next(err);
       });
@@ -63,9 +59,7 @@ const updateUserInfo = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const {
-    name, email, password,
-  } = req.body;
+  const { name, email, password } = req.body;
 
   bcrypt.hash(password, 10).then((hash) => User.create({
     name,
@@ -78,14 +72,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === VALIDATION_ERROR) {
-        return next(
-          new BadRequestError(USER_INVALID_DATA),
-        );
+        return next(new BadRequestError(USER_INVALID_DATA));
       }
       if (err.code === 11000) {
-        return next(
-          new ConflictError(USER_CONFLICT_EMAIL),
-        );
+        return next(new ConflictError(USER_CONFLICT_EMAIL));
       }
       return next(err);
     }));
@@ -96,13 +86,10 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        JWT_SECRET,
-        { expiresIn: '7d' },
-      );
-      res
-        .send({ token });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      res.send({ token });
     })
     .catch(next);
 };

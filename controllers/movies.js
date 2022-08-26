@@ -23,6 +23,7 @@ const createMovie = (req, res, next) => {
     country, director, duration, year, description, image,
     trailerLink, thumbnail, movieId, nameRU, nameEN,
   } = req.body;
+
   Movie.create(
     {
       country,
@@ -50,6 +51,7 @@ const createMovie = (req, res, next) => {
 
 const deleteMovie = (req, res, next) => {
   const { filmId } = req.params;
+
   Movie
     .findById(filmId)
     .orFail(new NotFoundError(FILM_NOT_FOUND))

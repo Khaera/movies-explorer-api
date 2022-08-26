@@ -17,6 +17,10 @@ const NEED_AUTHORIZE = 'Необходима авторизация.';
 
 const INVALID_EMAIL_OR_PASS = 'Неверный email или пароль.';
 
+const INVALID_LINK = 'Невалидная ссылка';
+
+const INVALID_EMAIL_FORMAT = 'Неправильный формат почты';
+
 const SERVER_DEFAULT_MESSAGE = 'На сервере произошла ошибка.';
 
 const VALIDATION_ERROR = 'ValidationError';
@@ -38,6 +42,8 @@ module.exports = {
   USER_CONFLICT_EMAIL,
   NEED_AUTHORIZE,
   INVALID_EMAIL_OR_PASS,
+  INVALID_LINK,
+  INVALID_EMAIL_FORMAT,
   SERVER_DEFAULT_MESSAGE,
   VALIDATION_ERROR,
   PAGE_NOT_FOUND,
